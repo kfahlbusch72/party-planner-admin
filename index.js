@@ -1,6 +1,6 @@
 // === Constants ===
 const BASE = "https://fsa-crud-2aa9294fe819.herokuapp.com/api";
-const COHORT = ""; // Make sure to change this!
+const COHORT = "/2506-Karl"; // Make sure to change this!
 const API = BASE + COHORT;
 
 // === State ===
@@ -55,6 +55,39 @@ async function getGuests() {
   } catch (e) {
     console.error(e);
   }
+}
+
+function NewPartyForm() {
+  const $form = document.createElement("form");
+  $form.innerHTML = `
+  <h3>Create New Party</h3>
+  <label>Name: <input name="name" required /></label>
+  <label>Description: <textarea name="description" required></textarea></label>
+  <label>Date: <input name="date" type="date" required /></label>
+  <label>Location: <input name="location" required /></label>
+  <button type="submit">Add Party</button>
+  `;
+  $form.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const data = {
+      name: $form.name.valueOf,
+      desription: $form.description.value,
+      location: $form.location.value,
+      data: new Date($form.date.value).toISOString(),
+    };
+    try {
+      const response = await fetch(API + "/events", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new error(response.status);
+      await getParties();
+      $form.reset();
+      }
+      
+    } catch (error) {}
+  });
 }
 
 // === Components ===
