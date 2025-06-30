@@ -70,10 +70,10 @@ function NewPartyForm() {
   $form.addEventListener("submit", async (ev) => {
     ev.preventDefault();
     const data = {
-      name: $form.name.valueOf,
-      desription: $form.description.value,
+      name: $form.name.value,
+      description: $form.description.value,
       location: $form.location.value,
-      data: new Date($form.date.value).toISOString(),
+      date: new Date($form.date.value).toISOString(),
     };
     try {
       const response = await fetch(API + "/events", {
@@ -81,7 +81,7 @@ function NewPartyForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      if (!response.ok) throw new error(response.status);
+      if (!response.ok) throw new Error(response.status);
       await getParties();
       $form.reset();
     } catch (error) {
@@ -113,6 +113,12 @@ function DeletePartyButton() {
     }
   });
   return $button;
+}
+
+function ControlBar() {
+  const $bar = document.createElement("div");
+  $bar.append(NewPartyForm(), DeletePartyButton());
+  return $bar;
 }
 
 // === Components ===
@@ -189,9 +195,13 @@ function GuestList() {
 // === Render ===
 function render() {
   const $app = document.querySelector("#app");
-  $app.innerHTML = `
-    <h1>Party Planner</h1>
-    <main>
+  $app.innerHTML = `<h1>Party Planner</h1>`;
+
+  $app.appendChild(ControlBar());
+
+  const $main = document.createElement("main");
+
+  $main.innerHTML = `
       <section>
         <h2>Upcoming Parties</h2>
         <PartyList></PartyList>
@@ -200,11 +210,12 @@ function render() {
         <h2>Party Details</h2>
         <SelectedParty></SelectedParty>
       </section>
-    </main>
   `;
 
-  $app.querySelector("PartyList").replaceWith(PartyList());
-  $app.querySelector("SelectedParty").replaceWith(SelectedParty());
+  $main.querySelector("PartyList").replaceWith(PartyList());
+  $main.querySelector("SelectedParty").replaceWith(SelectedParty());
+
+  $app.appendChild($main);
 }
 
 async function init() {
