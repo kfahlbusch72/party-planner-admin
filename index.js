@@ -84,11 +84,15 @@ function NewPartyForm() {
       if (!response.ok) throw new error(response.status);
       await getParties();
       $form.reset();
+      } catch (error) {
+        console.error("POST failed", error);
+        alert("Could not create party");
       }
-      
-    } catch (error) {}
   });
+  return $form
 }
+
+function
 
 // === Components ===
 
