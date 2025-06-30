@@ -78,21 +78,42 @@ function NewPartyForm() {
     try {
       const response = await fetch(API + "/events", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
       if (!response.ok) throw new error(response.status);
       await getParties();
       $form.reset();
-      } catch (error) {
-        console.error("POST failed", error);
-        alert("Could not create party");
-      }
+    } catch (error) {
+      console.error("POST failed", error);
+      alert("Could not create party");
+    }
   });
-  return $form
+  return $form;
 }
 
-function
+function DeletePartyButton() {
+  const $button = document.createElement("button");
+  $button.textContent = "Delete Selected Party";
+  $button.disabled = !selectedParty;
+  $button.addEventListener("click", async () => {
+    if (!selectedParty) return;
+    if (!confirm("Are you sure you want to delete this party?")) return;
+    try {
+      const response = await fetch(`${API}/events/${selectedParty.id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error(response.status);
+      selectedParty = undefined;
+      await getParties();
+      await getRsvps();
+    } catch (error) {
+      console.error("DELETE failed", error);
+      alert("Could not delete party");
+    }
+  });
+  return $button;
+}
 
 // === Components ===
 
